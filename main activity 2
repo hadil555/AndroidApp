@@ -1,0 +1,69 @@
+main activity 2
+package tn.essat.gestionlivre;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.List;
+import java.util.Vector;
+
+public class MainActivity2 extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+
+        MyDB bd= new MyDB(getApplicationContext(),"essat2.db", null, 2);
+        SQLiteDatabase table = bd.getWritableDatabase();
+
+        Bundle bdl = getIntent().getExtras();
+        TextView tx= findViewById(R.id.tt1);
+        String username = bdl.getString("Name");
+        tx.setText("Bonjour Mr : \n" + username);
+        if ((bdl.getString("nom") != null && (bdl.getString("Classe")) != null)) {
+            String matiere = bdl.getString("nom");
+            String classe = bdl.getString("Classe");
+            ContentValues values = new ContentValues();
+            values.put("nom", nom);
+            values.put("classe", classe);
+            table.insert("Matiere", null, values);
+
+        }
+
+        ListView ma = findViewById(R.id.lv1);
+
+        Vector<String> liste2 = new Vector<String>();
+
+        Cursor cr = table.query("Livre", new String[]{"id","nom", "classe"}, null, null, null, null, null);
+        cr.moveToFirst();
+        while(!cr.isAfterLast()) {
+            liste2.add("Matiere : " + cr.getString(1) + "\nCategorie: " + cr.getString(2) + "\n");
+            cr.moveToNext();
+
+        }
+        ArrayAdapter<String> ad = new ArrayAdapter<>(this , android.R.layout.simple_list_item_1, android.R.id.text1 , liste2);
+        lv.setAdapter(ad);
+
+        Button AjoutP = findViewById(R.id.btnAjout);
+        AjoutP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cr.close();
+                Intent i2= new Intent(getApplicationContext(), AjoutLivre.class );
+                startActivity(i2);
+            }
+        });
+
+
+    }
